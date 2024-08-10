@@ -19,10 +19,10 @@ const { state, saveCreds } = await useMultiFileAuthState('./Database/session/ses
         printQRInTerminal: true, 
         logger: pino({ level: "fatal" }), 
         browser: ['Ubuntu', 'Edge', '5.1.0'],
-        emitOwnEvents: true, 
-        markOnlineOnConnect: false,
-        syncFullHistory: true,
-        fireInitQueries: true
+        emitOwnEvents: false, 
+        markOnlineOnConnect: true,
+        syncFullHistory: false,
+        fireInitQueries: false
     })
     
     store.bind(sock.ev)
@@ -70,6 +70,37 @@ const { state, saveCreds } = await useMultiFileAuthState('./Database/session/ses
             console.log('opened connection')
         }
     })
+    
+    sock.ev.on('group-participants.update', async (anu) => { 
+    console.log(anu) 
+    try { 
+    let metadata = await sock.groupMetadata(anu.id) 
+    let participants = anu.participants 
+    for (let num of participants) { 
+    try { 
+    ppuser = await sock.profilePictureUrl(num, 'image') 
+    } catch (err) { 
+    ppuser = 'https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png?q=60' 
+    } 
+    try { 
+    ppgroup = await sock.profilePictureUrl(anu.id, 'image') 
+    } catch (err) { 
+    ppgroup = 'https://i.ibb.co/RBx5SQC/avatar-group-large-v2.png?q=60' 
+    } 
+    memb = metadata.participants.length 
+    XeonWlcm = await getBuffer(ppuser) 
+    XeonLft = await getBuffer(ppuser) 
+    if (anu.action == 'add') { 
+    const xeonbuffer = await getBuffer(ppuser) 
+    let xeonName = num 
+    const xmembers = metadata.participants.length 
+    sock.sendMessage(anu.id, { text: `hi yang baru bergabung ${xeonName.split("@")[0]}\n\nDilarang kirim sticker/link\n\nVideo Biasanya Runtime Malem Dikirim 99 video, Standby group` }) 
+    } 
+   } 
+  } catch (err) {
+console.log(err) 
+ }
+})
     
     sock.ev.on('messages.upsert', async chatUpdate => {
         try {
